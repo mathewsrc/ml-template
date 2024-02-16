@@ -1,0 +1,14 @@
+python: 3.12
+build_dependencies:
+- pip
+- setuptools
+- wheel
+dependencies:
+- mlflow==2.10.2
+- scikit-learn==1.4.1.post1
+- polars==0.20.9
+- matplotlib==3.8.3
+- pandas==2.2.0
+- fairlearn==0.10.0
+- numpy==1.26.4
+- prefect==2.15.0
