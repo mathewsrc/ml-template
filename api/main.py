@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel
-import os
 from dotenv import load_dotenv
 import mangum
 import uvicorn
@@ -21,7 +20,7 @@ load_dotenv()
 @app.get("/", response_class=HTMLResponse)
 async def root():
 	return HTMLResponse(
-	"""
+		"""
     <h1>Welcome to</p>
     """
 	)
@@ -30,13 +29,14 @@ async def root():
 @app.post("/predict")
 async def question(body: Body):
 	try:
-		JSONResponse({"result": body.text})
+		predict = 10
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=str(e))
-	return {"result": body.text}
+	return JSONResponse({"result": predict})
+
 
 handler = mangum.Mangum(app)
 
 
 if __name__ == "__main__":
-   uvicorn.run(app, host="0.0.0.0", port=8080)
+	uvicorn.run(app, host="0.0.0.0", port=8080)
