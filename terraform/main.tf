@@ -77,11 +77,10 @@ resource "null_resource" "package_lambda" {
   triggers = {
     files = "${filebase64sha256("${path.module}/Dockerfile")}"
     files = "${filebase64sha256("${path.module}/api/main.py")}"
-    files = "${filebase64sha256("${path.module}/src/utils.py")}"
-    files = "${filebase64sha256("${path.module}/../../scripts/deploy.sh")}"
+    files = "${filebase64sha256("${path.module}/../../deploy.sh")}"
   }
   provisioner "local-exec" {
-    command     = "chmod +x ${path.module}/../../scripts/deploy.sh; ${path.module}/../../scripts/deploy.sh"
+    command     = "chmod +x ${path.module}/../../deploy.sh; ${path.module}/../../deploy.sh"
     interpreter = ["bash", "-c"]
   }
 }
@@ -115,8 +114,6 @@ resource "aws_lambda_function" "func" {
 
   environment {
     variables = {
-      QDRANT_URL     = "${data.external.envs.result.qdrant_url}"
-      QDRANT_API_KEY = "${data.external.envs.result.qdrant_api_key}"
       BUCKET_NAME    = var.s3_bucket_id
       REGION         = data.aws_region.current.name
     }
