@@ -50,6 +50,13 @@ Using Makefile command
 make install-tools
 ```
 
+Now you need to configure AWS CLI. Use the following command in the terminal and provide the required information. Do not
+forget to set an AWS region as this project will retrieve it using AWS CLI to provision Lambda and S3:
+
+```bash
+aws configure
+```
+
 Now the last step. You must create an environment variable with your project name (replace the <ANY_NAME_YOU_LIKE>):
 
 ```bash
