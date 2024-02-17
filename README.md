@@ -57,10 +57,17 @@ forget to set an AWS region as this project will retrieve it using AWS CLI to pr
 aws configure
 ```
 
-Now the last step. You must create an environment variable with your project name (replace the <ANY_NAME_YOU_LIKE>):
+You must create an environment variable with your project name (replace the <ANY_NAME_YOU_LIKE>):
 
 ```bash
 export PROJECT_NAME="<ANY_NAME_YOU_LIKE>"
+```
+
+The last step is to replace the `AWS_REGION` in the `.github/workflows/cd.yml` file with the region you set in AWS CLI:
+
+```
+env:
+  AWS_REGION: us-east-1   # replace 
 ```
 
 
