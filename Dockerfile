@@ -10,11 +10,10 @@ RUN pip3 install \
      --only-binary=:all: --upgrade python-dotenv==1.0.1 \
           scikit-learn==1.4.1.post1 \
           polars==0.20.9 \
-          pandas==2.2.0 \
-          prefect==2.15.0 \
           fastapi==0.109.2 \
           pydantic==2.6.1 \
-          numpy==1.26.4
+          uvicorn==0.27.1 \
+          boto3==1.34.44 \
 
 # Copy function code
 COPY ./api/main.py  ${LAMBDA_TASK_ROOT}
