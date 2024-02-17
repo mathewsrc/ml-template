@@ -1,8 +1,7 @@
 FROM public.ecr.aws/lambda/python:3.12
 
 # Install dependencies
-RUN pip3 install \ 
-     --no-cache-dir \
+RUN pip3 install \
      --platform manylinux2014_x86_64 \
      --target "${LAMBDA_TASK_ROOT}" \
      --implementation cp \
@@ -19,4 +18,4 @@ RUN pip3 install \
 COPY ./api/main.py  ${LAMBDA_TASK_ROOT}
 
 # Set the CMD to your handler
-CMD [ "main.lambda_handler" ]
+CMD [ "main.handler" ]
