@@ -1,7 +1,8 @@
 FROM public.ecr.aws/lambda/python:3.12
 
 # Install dependencies
-RUN pip3 install \
+RUN pip3 install \ 
+     --no-cache-dir \
      --platform manylinux2014_x86_64 \
      --target "${LAMBDA_TASK_ROOT}" \
      --implementation cp \
@@ -13,6 +14,7 @@ RUN pip3 install \
           pydantic==2.6.1 \
           uvicorn==0.27.1 \
           boto3==1.34.44 \
+          mangum==0.17.0
 
 # Copy function code
 COPY ./api/main.py  ${LAMBDA_TASK_ROOT}
