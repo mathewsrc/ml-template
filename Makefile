@@ -23,7 +23,7 @@ format:
 lint:
 	@echo "Liting code"
 	chmod +x ./lint.sh
-	./scripts/lint.sh
+	./lint.sh
 
 test:
 	@echo "Running tests"
