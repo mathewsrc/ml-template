@@ -16,6 +16,3 @@ rm -rf awscliv2.zip aws
 
 # Verify the AWS CLI
 aws --version
-
-# Configure the AWS CLI
-aws configure
