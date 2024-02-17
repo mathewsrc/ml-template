@@ -1,2 +1,2 @@
-# mlflow-template
-Template for Mlflow Projects
+# ml-template
+Template for machine learning Projects
