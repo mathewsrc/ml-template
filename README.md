@@ -1,6 +1,4 @@
-# ml-template
-Template for machine learning Projects
-
+# Serveless Machine Learning Operations Template with AWS Lambda Functions 
 
 ## Requirements
 
