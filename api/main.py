@@ -9,9 +9,6 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# BUCKET_NAME = os.getenv("BUCKET_NAME")
-# AWS_REGION = os.getenv("REGION")
-
 app = FastAPI()
 
 class Body(BaseModel):
@@ -23,8 +20,6 @@ load_dotenv()
 @app.post("/predict")
 async def question(body: Body):
 	try:
-		# bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
-    	# object_key = event["Records"][0]["s3"]["object"]["key"]
 		predict = body.price * body.temperature
 		logger.info(f"Predicted value: {predict}")
 	except Exception as e:
@@ -32,10 +27,6 @@ async def question(body: Body):
 	return JSONResponse({"result": predict})
 
 handler = mangum.Mangum(app)
-
-# def lambda_handler(event, context):
-#     """AWS Lambda function handler."""
-#     return {"statusCode": 200, "body": json.dumps("Successful!")}
 
 
 if __name__ == "__main__":
