@@ -28,9 +28,21 @@ def read_dataset(
     pd.Dataframe: Target encoded dataframe
     """
     df = pd.read_csv(filename).drop(columns=drop_columns)
-    df[target_column] = df[target_column].map({"Yes": 1, "No": 0})
+    df[target_column] = df[target_column].map({"good": 1, "bad": 0})
+    
     return df
 
+def drop_null_rows(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Drops rows with null values
+
+    Parameters:
+    df (pd.Dataframe): Pandas dataframe containing features and targets
+
+    Returns:
+    pd.Dataframe: Dataframe with null rows dropped
+    """
+    return df.dropna(subset=['Quality'])
 
 def target_encode_categorical_features(
     df: pd.DataFrame, categorical_columns: List[str], target_column: str
@@ -88,26 +100,29 @@ def impute_and_scale_data(df_features: pd.DataFrame) -> pd.DataFrame:
 
 def main():
     # Read data
-    weather = read_dataset(
+    apple = read_dataset(
         filename=RAW_DATASET, drop_columns=DROP_COLNAMES, target_column=TARGET_COLUMN
     )
+    
+    # Drop rows with null values in target column
+    apple = drop_null_rows(apple)
 
     # Target encode categorical columns
     # results in all columns becoming numerical
-    categorical_columns = weather.select_dtypes(include=[object]).columns.to_list()
-    weather = target_encode_categorical_features(
-        df=weather, categorical_columns=categorical_columns, target_column=TARGET_COLUMN
+    categorical_columns = apple.select_dtypes(include=[object]).columns.to_list()
+    apple = target_encode_categorical_features(
+        df=apple, categorical_columns=categorical_columns, target_column=TARGET_COLUMN
     )
 
     # Impute and scale features
-    weather_features_processed = impute_and_scale_data(
-        weather.drop(columns=TARGET_COLUMN, axis=1)
+    apple_features_processed = impute_and_scale_data(
+        apple.drop(columns=TARGET_COLUMN, axis=1)
     )
 
     # Write processed dataset
-    weather_labels = weather[TARGET_COLUMN]
-    weather = pd.concat([weather_features_processed, weather_labels], axis=1)
-    weather.to_csv(PROCESSED_DATASET, index=None)
+    labels = apple[TARGET_COLUMN]
+    apple = pd.concat([apple_features_processed, labels], axis=1)
+    apple.to_csv(PROCESSED_DATASET, index=None)
 
 
 if __name__ == "__main__":
