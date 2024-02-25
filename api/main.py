@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 
 class Body(BaseModel):
-	price: str
-	temperature: float = 0.5
+	price: int
+	temperature: int = 2
 
 load_dotenv()
 
