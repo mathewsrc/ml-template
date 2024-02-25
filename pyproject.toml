@@ -26,6 +26,7 @@ numpy = "^1.26.4"
 prefect = "^2.15.0"
 python-dotenv = "^1.0.1"
 mangum = "^0.17.0"
+dvc = "^3.47.0"
 
 
 [build-system]
