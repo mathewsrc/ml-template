@@ -12,4 +12,4 @@ def test():
 def test_api():
 	response = client.post("/predict", json={"price": 10, "temperature": 2})
 	assert response.status_code == 200
-	assert 20 == 20
+ 	assert response.json() == {"result": 20}
