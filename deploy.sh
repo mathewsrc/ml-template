@@ -1,14 +1,12 @@
 #!/bin/bash
 set -e # Exit if any command fails
 
-pwd
-
 # This script is used to deploy the application
 
 # Get region and account id using aws cli
 AWS_REGION=$(aws configure get region)
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-AWS_ECR_REPOSITORY_NAME=$PROJECT_NAME # Replace with your ECR repository name
+AWS_ECR_REPOSITORY_NAME=lambda-repo # Replace with your ECR repository name
 AWS_ECR_REPOSITORY_URL=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$AWS_ECR_REPOSITORY_NAME
 TAG=$(git rev-parse HEAD) # Get current short commit hash
 
@@ -21,7 +19,7 @@ aws ecr get-login-password \
 
 # Build the Docker image
 echo "Building Docker image..."
-docker build --platform linux/amd64 -t $AWS_ECR_REPOSITORY_NAME .
+docker build --platform linux/amd64 -t $AWS_ECR_REPOSITORY_NAME -f ./lambda_functions/docker/Dockerfile .
 
 # Check if the ECR repository exists
 echo "Checking if ECR repository exists..."
@@ -41,7 +39,8 @@ aws ecr create-repository \
     --repository-name $AWS_ECR_REPOSITORY_NAME \
     --region $AWS_REGION \
     --image-scanning-configuration scanOnPush=true \
-    --image-tag-mutability MUTABLE
+    --image-tag-mutability MUTABLE \
+    --no-cli-pager
 
 # Tag the Docker image
 echo "Tagging Docker image..."
