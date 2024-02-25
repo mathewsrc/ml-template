@@ -1,12 +1,25 @@
 name: CI
 
+env:
+  AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
+
 on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - 'data/**'
+      - '.gitingore'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - 'data/**'
+      - '.gitingore'
   workflow_dispatch:
 
 jobs:
@@ -16,6 +29,16 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
+
+      - name: Configure AWS credentials (For test API calls to AWS Bedrock)
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Printout project name 
+        run: echo "PROJECT_NAME=$(echo $PROJECT_NAME)" >> $GITHUB_ENV
 
       - name: Setup Python 3.12
         uses: actions/setup-python@v4
