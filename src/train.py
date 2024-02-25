@@ -6,6 +6,8 @@ from utils import PROCESSED_DATASET, TARGET_COLUMN
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 import mlflow
+import pickle
+from pathlib import Path
 
 RFC_FOREST_DEPTH = 2
 
@@ -14,6 +16,11 @@ def train_model(X_train, y_train):
         max_depth=RFC_FOREST_DEPTH, n_estimators=5, random_state=1993
     )
     model.fit(X_train, y_train)
+    
+    # Save model in models/
+    model_path = Path("models/model.pkl")
+    with open(model_path, "wb") as file:
+        pickle.dump(model, file)
     return model
 
 
@@ -35,7 +42,7 @@ def evaluate_model(model, X_test, y_test, float_precision=4):
     )
 
 def load_data(file_path):
-    data = pd.read_csv(file_path)
+    data = pl.read_csv(file_path).to_pandas()
     X = data.drop(TARGET_COLUMN, axis=1)
     y = data[TARGET_COLUMN]
     return X, y
