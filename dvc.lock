@@ -1,0 +1,54 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+    - path: raw_dataset/apple_quality.csv
+      hash: md5
+      md5: c5d3bb68c6b4505943c884e373313980
+      size: 387649
+    - path: src/preprocess.py
+      hash: md5
+      md5: 3c90d5ae8b52f20860eb6338232674a0
+      size: 3749
+    - path: src/utils.py
+      hash: md5
+      md5: 5bb6efdf5e77f11274eee7a15372f87b
+      size: 395
+    outs:
+    - path: processed_dataset/apple_quality.csv
+      hash: md5
+      md5: 80fb7e4ee6cc0fb597b69ab0c97fc895
+      size: 561497
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: processed_dataset/apple_quality.csv
+      hash: md5
+      md5: 80fb7e4ee6cc0fb597b69ab0c97fc895
+      size: 561497
+    - path: src/metrics_and_plots.py
+      hash: md5
+      md5: 9f8f1e70a070b00a555391cb49b35b57
+      size: 393
+    - path: src/train.py
+      hash: md5
+      md5: d7a14a411845553261a3b428e4237152
+      size: 1959
+    - path: src/utils.py
+      hash: md5
+      md5: 5bb6efdf5e77f11274eee7a15372f87b
+      size: 395
+    outs:
+    - path: metrics/metrics.json
+      hash: md5
+      md5: 76e9a04509716da7d5646cdc86ebac05
+      size: 67
+    - path: models/model.pkl
+      hash: md5
+      md5: 3eea8bd9a7b94e6b65a761b4e6fb3c84
+      size: 5500
+    - path: reports/confusion_matrix.png
+      hash: md5
+      md5: d075b36d17e5ad7d9606a6f8a35a3bf4
+      size: 15249
