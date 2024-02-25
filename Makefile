@@ -57,6 +57,26 @@ mlflow-ui:
 	@echo "Starting MLflow UI"
 	mlflow ui
 
+dvc-init:
+	@echo "Initializing DVC"
+	poetry run dvc init
+
+dvc-add:
+	@echo "Adding data to DVC"
+	poetry run dvc add .data/dataset.csv
+
+dvc-add-remote:
+	@echo "Adding remote storage to DVC. For local storage use: /tmp/dvc/localremote"
+	poetry run dvc remote add -d storage s3://mlflow-dvc-demo
+
+dvc-push:
+	@echo "Pushing data to DVC remote storage"
+	poetry run dvc push
+
+dvc-pull:
+	@echo "Pulling data from DVC remote storage"
+	poetry run dvc pull
+
 aws-user:
 	@echo "Check current AWS user signed in to AWS CLI"
 	aws sts get-caller-identity
