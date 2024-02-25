@@ -2,10 +2,10 @@ import shutil
 from pathlib import Path
 
 DATASET_TYPES = ["test", "train"]
-DROP_COLNAMES = ["Date"]
-TARGET_COLUMN = "RainTomorrow"
-RAW_DATASET = "raw_dataset/weather.csv"
-PROCESSED_DATASET = "preprocessed_dataset/weather.csv"
+DROP_COLNAMES = ["A_id"]
+TARGET_COLUMN = "Quality"
+RAW_DATASET = "raw_dataset/apple_quality.csv"
+PROCESSED_DATASET = "processed_dataset/apple_quality.csv"
 
 
 def delete_and_recreate_dir(path):
