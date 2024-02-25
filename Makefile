@@ -63,7 +63,7 @@ dvc-init:
 
 dvc-add:
 	@echo "Adding data to DVC"
-	poetry run dvc add .data/dataset.csv
+	poetry run dvc add raw_dataset/dataset.csv
 
 dvc-add-remote:
 	@echo "Adding remote storage to DVC. For local storage use: /tmp/dvc/localremote"
