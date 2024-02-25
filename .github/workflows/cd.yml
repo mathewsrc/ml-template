@@ -1,62 +1,106 @@
-name: 'Terraform (IaC)'
+name: Deploy
 
 # Trigger on CI workflow completion
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ["CML ##"]
     types:
       - completed
 
 env:
   AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY_LAMBDA: lambda-repo
 
 permissions:
   contents: read
 
 jobs:
-  terraform:
-      name: 'Terraform'
-      runs-on: ubuntu-latest
+  deploy-lambda:
+    name: Deploy Lambda Functions (Docker)
+    runs-on: ubuntu-latest
 
-      # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Printout project name 
+      run: echo "PROJECT_NAME=$(echo $PROJECT_NAME)" >> $GITHUB_ENV
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+  
+    - name: Create ECR repository
+      run: |
+        AWS_ECR_REPOSITORY_NAME=${{ env.ECR_REPOSITORY_LAMBDA }}
+        if ! aws ecr describe-repositories --repository-names $AWS_ECR_REPOSITORY_NAME > /dev/null 2>&1; then
+          aws ecr create-repository --repository-name $AWS_ECR_REPOSITORY_NAME --image-scanning-configuration scanOnPush=true
+        fi
+  
+    - name: Build, tag, and push image to Amazon ECR (Lambda Functions)
+      id: build-image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: ./lambda_functions/docker/Dockerfile
+        push: true
+        tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_LAMBDA}}:${{ github.sha }}
+  
+  terraform:
+      name: 'Terraform (IaC)'
+      needs: deploy-lambda
+      runs-on: ubuntu-latest
+      environment: production
+
       defaults:
         run:
           shell: bash
       
-      if: ${{ github.event.workflow_run.conclusion == 'success' }}
       steps:
-      # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Configure AWS credentials for the AWS CLI
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Printout project name env
+        run: echo "PROJECT_NAME=$(echo $PROJECT_NAME)" >> $GITHUB_ENV  
 
-      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
-        run: make tf-init
+        run: |
+            AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text) && \
+            cd terraform && terraform init \
+               -backend-config="region=$AWS_REGION" \
+               -backend-config='assume_role={"role_arn":"arn:aws:iam::'$AWS_ACCOUNT_ID':role/terraform_state_role"}'
 
-      # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
         run: make tf-fmt
 
-      # Generates an execution plan for Terraform
       - name: Terraform Plan
         run: make tf-plan
 
         # On push to "main", build or change infrastructure according to Terraform configuration files
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
-        run: make tf-apply
+        # if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
+        run: make tf-deploy
