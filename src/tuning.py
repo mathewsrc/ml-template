@@ -1,7 +1,7 @@
 import json
 import polars as pl
 from sklearn.model_selection import train_test_split
-from metrics_and_plots import save_best_param, save_hp_tunning_results
+from metrics_and_plots import save_best_param, save_hp_tuning_results
 from utils import PROCESSED_DATASET, TARGET_COLUMN
 from sklearn.ensemble import RandomForestClassifier
 from dvc.api import params_show
@@ -34,7 +34,7 @@ def main():
     #model = grid_search.best_estimator_
     best_param = grid_search.best_params_
     save_best_param(best_param)
-    save_hp_tunning_results(grid_search.cv_results_)
+    save_hp_tuning_results(grid_search.cv_results_)
 
 if __name__ == "__main__":
     main()
