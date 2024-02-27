@@ -43,7 +43,7 @@ predict:
 
 trigger-actions:
 	@echo "Triggering GitHub Actions"
-	git commit --ammend --no-edit && git push --force-with-lease
+	git commit --amend --no-edit && git push --force-with-lease
 
 lambda-predict:
 	@echo "Testing Lambda function"
