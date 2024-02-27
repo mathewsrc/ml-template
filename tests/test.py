@@ -4,6 +4,7 @@ from api.main import app
 
 client = TestClient(app)
 
+
 def test():
 	assert (1, 2, 3) == (1, 2, 3)
 	assert "Hello" == "Hello"
