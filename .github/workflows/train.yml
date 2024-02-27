@@ -13,17 +13,13 @@ on:
         description: 'Name of the project'
         required: true
         default: 'cicd-ai'
-  workflow_run: 
-    workflows: ["hp-tuning"]
-    types:
-      - completed
 
 permissions: write-all
 
 jobs:
   train:
     runs-on: ubuntu-latest
-    #if: startsWith(github.head_ref, 'train/')
+    if: startsWith(github.head_ref, 'train/')
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -85,3 +81,18 @@ jobs:
 
           # Create comment from markdown report
           cml comment create report.md
+        
+      - name: Create deploy branch
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Finish the create pull request command
+          cml pr create \
+          --user-email train-bot@cicd.ai \
+          --user-name TrainBot \
+          --message "Training completed" \
+          # Write the new head branch name
+          --branch deploy/${{ github.sha }} \
+          # Write the target branch name
+          --target-branch main \
+          .

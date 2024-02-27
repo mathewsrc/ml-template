@@ -89,6 +89,16 @@ dvc-plots:
 	@echo "Showing DVC plots"
 	poetry run dvc plots show predictions.csv
 
+trigger-tuning:
+	@echo "Trigger DVC tuning"
+	git checkout -b hp_tune/$(shell git rev-parse --short HEAD)
+	git commit --amend --no-edit && git push --force-with-lease --set-upstream origin hp_tune/$(shell git rev-parse --short HEAD)
+
+trigger-training:
+	@echo "Trigger DVC training"
+	git checkout -b train/$(shell git rev-parse --short HEAD)
+	git commit --amend --no-edit && git push --force-with-lease --set-upstream origin train/$(shell git rev-parse --short HEAD)
+
 aws-user:
 	@echo "Check current AWS user signed in to AWS CLI"
 	aws sts get-caller-identity
