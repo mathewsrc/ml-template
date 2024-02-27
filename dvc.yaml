@@ -14,7 +14,13 @@ stages:
     - src/metrics_and_plots.py
     - src/train.py
     - src/utils.py
+    params:
+    - random_state
+    - train.max_depth
+    - train.n_estimators
     outs:
     - metrics/metrics.json
     - models/model.pkl
-    - reports/confusion_matrix.png
+    plots:
+    - metrics/predictions.csv
+    - plots/confusion_matrix.png
