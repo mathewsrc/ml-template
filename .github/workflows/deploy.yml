@@ -4,10 +4,6 @@ name: Deploy
 on:
   pull_request:
     branches: main
-    paths-ignore:
-      - 'README.md'
-      - 'docs/**'
-      - '.gitingore'
 
 env:
   AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
