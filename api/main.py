@@ -11,11 +11,14 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+
 class Body(BaseModel):
 	price: int
 	temperature: int = 2
 
+
 load_dotenv()
+
 
 @app.post("/predict")
 async def question(body: Body):
@@ -25,6 +28,7 @@ async def question(body: Body):
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=str(e))
 	return JSONResponse({"result": predict})
+
 
 handler = mangum.Mangum(app)
 
