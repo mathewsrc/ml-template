@@ -29,27 +29,28 @@ jobs:
           pipx install poetry
           poetry install
           
-      # Setup CML GitHub Action
-      - name: Setup CML
-        uses: iterative/setup-cml@v1
+      # Setup DVC GitHub Action
+      - name: Setup DVC
+        uses: iterative/setup-dvc@v1
       
       - name: Printout project name env
         run: echo "PROJECT_NAME=$(echo $PROJECT_NAME)" >> $GITHUB_ENV
     
-      - name: Train model
+      - name: Run DVC pipeline for CML
         run: |
-          poetry run python3 src/preprocess_dataset.py
-          poetry run python3 src/train.py
+          poetry run dvc repro
 
       - name: Write CML report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Add metrics data to markdown
-          cat metrics/metrics.json >> model_eval_report.md
-          
+          poetry run dvc metrics show --md >> report.md
+          # Compare metrics with main branch
+          git fetch --prune
+          poetry run dvc metrics diff --md main >> report.md
           # Add confusion matrix plot to markdown
-          echo "![confusion matrix plot](./reports/confusion_matrix.png)" >> model_eval_report.md
+          echo "![confusion matrix plot](./reports/confusion_matrix.png)" >> report.md
 
           # Create comment from markdown report
-          cml comment create model_eval_report.md
+          cml comment create report.md
