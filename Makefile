@@ -41,6 +41,10 @@ predict:
 	@echo "Predicting with local app"
 	curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"predict":"10"}'
 
+trigger-actions:
+	@echo "Triggering GitHub Actions"
+	git commit --ammend --no-edit && git push --force-with-lease
+
 lambda-predict:
 	@echo "Testing Lambda function"
 	curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"payload":"10"}'
