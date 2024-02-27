@@ -29,7 +29,7 @@ def save_best_param(best_param):
     with open("config/best_param.json", "w") as file:
         json.dump(best_param, file)
         
-def save_hp_tunning_results(results):
+def save_hp_tuning_results(results):
     markdown_table = pl.DataFrame(results).to_pandas().to_markdown(index=False)
-    with open("hp_tunning_results.md", "w") as markdown:
+    with open("hp_tuning_results.md", "w") as markdown:
         markdown.write(markdown_table)
