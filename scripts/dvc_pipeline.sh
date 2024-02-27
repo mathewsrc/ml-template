@@ -19,7 +19,7 @@ poetry run dvc stage add --force\
     python src/train.py
 
 poetry run dvc stage add --force \
-    -n tuning \
+    -n hp_tune \
     -d src/tuning.py -d src/metrics_and_plots.py -d src/utils.py -d processed_dataset/apple_quality.csv -d config/hp_config.json \
     -p random_state -p cv \
     --outs-persist-no-cache hp_tunning_results.md \
