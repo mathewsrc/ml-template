@@ -1,10 +1,10 @@
 import json
 import polars as pl
 from sklearn.model_selection import train_test_split
-from metrics_and_plots import plot_confusion_matrix, save_metrics, save_predictions
+from metrics_and_plots import plot_confusion_matrix, save_metrics, save_predictions, save_roc_auc
 from utils import PROCESSED_DATASET, TARGET_COLUMN
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
 import mlflow
 import pickle
 from pathlib import Path
@@ -34,11 +34,14 @@ def evaluate_model(model, X_test, y_test, float_precision=4):
     precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
+    y_proba = model.predict_proba(X_test)[:, 1]
+    roc_auc = roc_auc_score(y_test, y_proba)
     metrics = {
         "accuracy": accuracy,
         "precision": precision,
         "recall": recall,
         "f1_score": f1,
+        "roc_auc": roc_auc,
     }
     
     save_predictions(y_test, y_pred)
@@ -67,7 +70,7 @@ def main():
 
     save_metrics(metrics)
     plot_confusion_matrix(model, X_test, y_test)
-
+    save_roc_auc(model, X_test, y_test)
 
 if __name__ == "__main__":
     main()
