@@ -3,10 +3,7 @@ name: hp-tuning
 on:
   pull_request:
     branches: main
-    paths-ignore:
-      - 'README.md'
-      - 'docs/**'
-      - '.gitingore'
+    
   workflow_dispatch:
     inputs:
       PROJECT_NAME:
