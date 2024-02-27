@@ -10,7 +10,7 @@ on:
         - completed
   pull_request:
     branches: main
-    
+
 permissions: write-all
 
 jobs:
@@ -54,9 +54,12 @@ jobs:
           poetry run dvc metrics show --md >> report.md
           # Compare metrics with main branch
           git fetch --prune
+          echo "## Metrics Diff" >> report.md
           poetry run dvc metrics diff --md main >> report.md
+          echo "## Confusion Matrix Diff" >> report.md
+          poetry run dvc plots diff --target $metric main >> report.md
           # Add confusion matrix plot to markdown
-          echo "![confusion matrix plot](./reports/confusion_matrix.png)" >> report.md
+          #echo "![confusion matrix plot](./plots/confusion_matrix.png)" >> report.md
 
           # Create comment from markdown report
           cml comment create report.md
