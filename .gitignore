@@ -4,8 +4,7 @@ terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
 
 # DVC
-dvc_plots/*
-dvc_plots/index.html
+dvc_plots/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
