@@ -45,7 +45,7 @@ stages:
         # plot data in git repository
         cache: false
     - plots/confusion_matrix.png
-  tunning:
+  hp_tune:
     cmd: python src/tuning.py
     deps:
     - config/hp_config.json
