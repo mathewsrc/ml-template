@@ -36,7 +36,7 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
     
     - name: Printout project name 
-      run: echo "PROJECT_NAME=$(echo $PROJECT_NAME)" >> $GITHUB_ENV
+      run: echo $PROJECT_NAME >> $GITHUB_ENV
 
     - name: Login to Amazon ECR
       id: login-ecr
