@@ -51,7 +51,7 @@ jobs:
           cml pr create \
           --user-email hp-bot@cicd.ai \
           --user-name HPBot \
-          --message "HP tuning" \
+          --message "Hyperparameter tuning" \
           # Write the new head branch name
           --branch train/${{ github.sha }} \
           # Write the target branch name
