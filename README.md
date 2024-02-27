@@ -61,12 +61,16 @@ You must create an environment variable with your project name (replace the <ANY
 export PROJECT_NAME="<ANY_NAME_YOU_LIKE>"
 ```
 
-The last step is to replace the `AWS_REGION` in the `.github/workflows/cd.yml` file with the region you set in AWS CLI:
+Replace the `AWS_REGION` in the `.github/workflows/cd.yml` file with the region you set in AWS CLI:
 
 ```
 env:
   AWS_REGION: us-east-1   # replace 
 ```
+
+In order to be able to use GitHub Actions you will need to allow GitHub Actions to create pull requests.
+You can change the permission in: Repository Settings -> Actions -> General -> Workflows permissions ->
+`Allow GitHub Actions to create and aprove pull requests`  
 
 
 
