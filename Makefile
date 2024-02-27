@@ -70,8 +70,8 @@ dvc-add:
 	poetry run dvc add raw_dataset/dataset.csv
 
 dvc-add-remote:
-	@echo "Adding remote storage to DVC. For local storage use: /tmp/dvc/localremote"
-	poetry run dvc remote add -d storage s3://mlflow-dvc-demo
+	@echo "Adding remote storage to DVC. For cloud storage use: s3://mlflow-dvc-demo"
+	poetry run dvc remote add -d storage /tmp/dvc/localremote 
 
 dvc-push:
 	@echo "Pushing data to DVC remote storage"
