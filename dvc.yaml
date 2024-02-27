@@ -20,32 +20,43 @@ stages:
     - train.n_estimators
     outs:
     - models/model.pkl
-
     metrics:
-      - metrics/metrics.json:
-          cache: false
-
+    - metrics/metrics.json:
+        cache: false
     plots:
     - metrics/predictions.csv:
         template: confusion_normalized
         x: predicted_label
         y: true_label
-        x_label: 'Predicted Label'
-        y_label: 'True Label'
-        title: 'Confusion Matrix'
+        x_label: Predicted Label
+        y_label: True Label
+        title: Confusion Matrix
         # Set the cache parameter to store
         # plot data in git repository
         cache: false
-
     - metrics/roc_curve.csv:
         template: simple
         x: fpr
         y: tpr
-        x_label: 'False Positive Rate'
-        y_label: 'True Positive Rate'
-        title: 'ROC Curve'
+        x_label: False Positive Rate
+        y_label: True Positive Rate
+        title: ROC Curve
         # Set the cache parameter to store
         # plot data in git repository
         cache: false
-
     - plots/confusion_matrix.png
+  tunning:
+    cmd: python src/tunning.py
+    deps:
+    - config/hp_config.json
+    - processed_dataset/apple_quality.csv
+    - src/metrics_and_plots.py
+    - src/train.py
+    - src/utils.py
+    params:
+    - random_state
+    - cv
+    outs:
+    - hp_tunning_results.md:
+        cache: false
+        persist: true
