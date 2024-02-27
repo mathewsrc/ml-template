@@ -2,3 +2,4 @@ random_state: 42
 train:
   n_estimators: 5
   max_depth: 7
+cv: 5
