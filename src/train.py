@@ -1,19 +1,22 @@
 import json
 import polars as pl
 from sklearn.model_selection import train_test_split
-from metrics_and_plots import plot_confusion_matrix, save_metrics
+from metrics_and_plots import plot_confusion_matrix, save_metrics, save_predictions
 from utils import PROCESSED_DATASET, TARGET_COLUMN
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 import mlflow
 import pickle
 from pathlib import Path
+from dvc.api import params_show
 
-RFC_FOREST_DEPTH = 2
+params = params_show()
+rf_max_depth = params["train"]["max_depth"]
+rf_n_estimators = params["train"]["n_estimators"]
 
 def train_model(X_train, y_train):
     model = RandomForestClassifier(
-        max_depth=RFC_FOREST_DEPTH, n_estimators=5, random_state=1993
+        max_depth=rf_max_depth, n_estimators=rf_n_estimators, random_state=1993
     )
     model.fit(X_train, y_train)
     
@@ -21,6 +24,7 @@ def train_model(X_train, y_train):
     model_path = Path("models/model.pkl")
     with open(model_path, "wb") as file:
         pickle.dump(model, file)
+        
     return model
 
 
@@ -36,6 +40,8 @@ def evaluate_model(model, X_test, y_test, float_precision=4):
         "recall": recall,
         "f1_score": f1,
     }
+    
+    save_predictions(y_test, y_pred)
 
     return json.loads(
         json.dumps(metrics), parse_float=lambda x: round(float(x), float_precision)
