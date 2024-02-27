@@ -8,7 +8,9 @@ on:
       workflows: ["CI ##"]
       types:
         - completed
-
+  pull_request:
+    branches: main
+    
 permissions: write-all
 
 jobs:
