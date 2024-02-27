@@ -3,7 +3,6 @@ name: hp-tuning
 on:
   pull_request:
     branches: main
-
   workflow_dispatch:
     inputs:
       PROJECT_NAME:
