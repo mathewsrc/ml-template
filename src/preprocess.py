@@ -6,124 +6,123 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 
 from utils import (
-    DROP_COLNAMES,
-    PROCESSED_DATASET,
-    RAW_DATASET,
-    TARGET_COLUMN,
+	DROP_COLNAMES,
+	PROCESSED_DATASET,
+	RAW_DATASET,
+	TARGET_COLUMN,
 )
 
-def read_dataset(
-    filename: str, drop_columns: List[str], target_column: str
-) -> pd.DataFrame:
-    """
-    Reads the raw data file and returns pandas dataframe
-    Target column values are expected in binary format with Yes/No values
 
-    Parameters:
-    filename (str): raw data filename
-    drop_columns (List[str]): column names that will be dropped
-    target_column (str): name of target column
+def read_dataset(filename: str, drop_columns: List[str], target_column: str) -> pd.DataFrame:
+	"""
+	Reads the raw data file and returns pandas dataframe
+	Target column values are expected in binary format with Yes/No values
 
-    Returns:
-    pd.Dataframe: Target encoded dataframe
-    """
-    df = pd.read_csv(filename).drop(columns=drop_columns)
-    df[target_column] = df[target_column].map({"good": 1, "bad": 0})
-    
-    return df
+	Parameters:
+	filename (str): raw data filename
+	drop_columns (List[str]): column names that will be dropped
+	target_column (str): name of target column
+
+	Returns:
+	pd.Dataframe: Target encoded dataframe
+	"""
+	df = pd.read_csv(filename).drop(columns=drop_columns)
+	df[target_column] = df[target_column].map({"good": 1, "bad": 0})
+
+	return df
+
 
 def drop_null_rows(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Drops rows with null values
+	"""
+	Drops rows with null values
 
-    Parameters:
-    df (pd.Dataframe): Pandas dataframe containing features and targets
+	Parameters:
+	df (pd.Dataframe): Pandas dataframe containing features and targets
 
-    Returns:
-    pd.Dataframe: Dataframe with null rows dropped
-    """
-    return df.dropna(subset=['Quality'])
+	Returns:
+	pd.Dataframe: Dataframe with null rows dropped
+	"""
+	return df.dropna(subset=["Quality"])
+
 
 def target_encode_categorical_features(
-    df: pd.DataFrame, categorical_columns: List[str], target_column: str
+	df: pd.DataFrame, categorical_columns: List[str], target_column: str
 ) -> pd.DataFrame:
-    """
-    Target encodes the categorical features of the dataframe
-    (http://www.saedsayad.com/encoding.htm)
+	"""
+	Target encodes the categorical features of the dataframe
+	(http://www.saedsayad.com/encoding.htm)
 
 
-    Parameters:
-    df (pd.Dataframe): Pandas dataframe containing features and targets
-    categorical_columns (List[str]): categorical column names that will be target encoded
-    target_column (str): name of target column
+	Parameters:
+	df (pd.Dataframe): Pandas dataframe containing features and targets
+	categorical_columns (List[str]): categorical column names that will be target encoded
+	target_column (str): name of target column
 
-    Returns:
-    pd.Dataframe: Target encoded dataframe
-    """
-    encoded_data = df.copy()
+	Returns:
+	pd.Dataframe: Target encoded dataframe
+	"""
+	encoded_data = df.copy()
 
-    # Iterate through categorical columns
-    for col in categorical_columns:
-        # Calculate mean target value for each category
-        encoding_map = df.groupby(col)[target_column].mean().to_dict()
+	# Iterate through categorical columns
+	for col in categorical_columns:
+		# Calculate mean target value for each category
+		encoding_map = df.groupby(col)[target_column].mean().to_dict()
 
-        # Apply target encoding
-        encoded_data[col] = encoded_data[col].map(encoding_map)
+		# Apply target encoding
+		encoded_data[col] = encoded_data[col].map(encoding_map)
 
-    return encoded_data
+	return encoded_data
 
 
 def impute_and_scale_data(df_features: pd.DataFrame) -> pd.DataFrame:
-    """
-    Imputes numerical data to its mean value
-    and then scales the data to a normal distribution
+	"""
+	Imputes numerical data to its mean value
+	and then scales the data to a normal distribution
 
-    Parameters:
-    filename (str): raw data filename
-    drop_columns (List[str]): column names that will be dropped
-    target_column (str): name of target column
+	Parameters:
+	filename (str): raw data filename
+	drop_columns (List[str]): column names that will be dropped
+	target_column (str): name of target column
 
-    Returns:
-    pd.Dataframe: Imputed and Scaled dataframe
-    """
+	Returns:
+	pd.Dataframe: Imputed and Scaled dataframe
+	"""
 
-    # Impute data with mean strategy
-    imputer = SimpleImputer(strategy="mean")
-    X_preprocessed = imputer.fit_transform(df_features.values)
+	# Impute data with mean strategy
+	imputer = SimpleImputer(strategy="mean")
+	X_preprocessed = imputer.fit_transform(df_features.values)
 
-    # Scale and fit with zero mean and unit variance
-    scaler = StandardScaler()
-    X_preprocessed = scaler.fit_transform(X_preprocessed)
+	# Scale and fit with zero mean and unit variance
+	scaler = StandardScaler()
+	X_preprocessed = scaler.fit_transform(X_preprocessed)
 
-    return pd.DataFrame(X_preprocessed, columns=df_features.columns)
+	return pd.DataFrame(X_preprocessed, columns=df_features.columns)
 
 
 def main():
-    # Read data
-    apple = read_dataset(
-        filename=RAW_DATASET, drop_columns=DROP_COLNAMES, target_column=TARGET_COLUMN
-    )
-    
-    # Drop rows with null values in target column
-    apple = drop_null_rows(apple)
+	# Read data
+	apple = read_dataset(
+		filename=RAW_DATASET, drop_columns=DROP_COLNAMES, target_column=TARGET_COLUMN
+	)
 
-    # Target encode categorical columns
-    # results in all columns becoming numerical
-    categorical_columns = apple.select_dtypes(include=[object]).columns.to_list()
-    apple = target_encode_categorical_features(
-        df=apple, categorical_columns=categorical_columns, target_column=TARGET_COLUMN
-    )
+	# Drop rows with null values in target column
+	apple = drop_null_rows(apple)
 
-    # Impute and scale features
-    apple_features_processed = impute_and_scale_data(
-        apple.drop(columns=TARGET_COLUMN, axis=1)
-    )
+	# Target encode categorical columns
+	# results in all columns becoming numerical
+	categorical_columns = apple.select_dtypes(include=[object]).columns.to_list()
+	apple = target_encode_categorical_features(
+		df=apple, categorical_columns=categorical_columns, target_column=TARGET_COLUMN
+	)
 
-    # Write processed dataset
-    labels = apple[TARGET_COLUMN]
-    apple = pd.concat([apple_features_processed, labels], axis=1)
-    apple.to_csv(PROCESSED_DATASET, index=None)
+	# Impute and scale features
+	apple_features_processed = impute_and_scale_data(apple.drop(columns=TARGET_COLUMN, axis=1))
+
+	# Write processed dataset
+	labels = apple[TARGET_COLUMN]
+	apple = pd.concat([apple_features_processed, labels], axis=1)
+	apple.to_csv(PROCESSED_DATASET, index=None)
 
 
 if __name__ == "__main__":
-    main()
+	main()
