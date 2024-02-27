@@ -10,7 +10,6 @@ on:
     paths-ignore:
       - 'README.md'
       - 'docs/**'
-      - 'data/**'
       - '.gitingore'
   pull_request:
     branches:
@@ -18,7 +17,6 @@ on:
     paths-ignore:
       - 'README.md'
       - 'docs/**'
-      - 'data/**'
       - '.gitingore'
   workflow_dispatch:
 
@@ -33,7 +31,7 @@ jobs:
       - name: Printout project name 
         run: echo "PROJECT_NAME=$(echo $PROJECT_NAME)" >> $GITHUB_ENV
 
-      - name: Setup Python 3.12
+      - name: Setup Python 
         uses: actions/setup-python@v4
         with:
           python-version: "3.12"
