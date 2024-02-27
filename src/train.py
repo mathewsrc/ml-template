@@ -2,13 +2,13 @@ import json
 import polars as pl
 from sklearn.model_selection import train_test_split
 from metrics_and_plots import plot_confusion_matrix, save_metrics, save_predictions, save_roc_auc
-from utils import PROCESSED_DATASET, TARGET_COLUMN
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
 import mlflow
 import pickle
 from pathlib import Path
 from dvc.api import params_show
+from utils import PROCESSED_DATASET, TARGET_COLUMN
 
 params = params_show()
 rf_max_depth = params["train"]["max_depth"]
@@ -18,6 +18,7 @@ def train_model(X_train, y_train):
     model = RandomForestClassifier(
         max_depth=rf_max_depth, n_estimators=rf_n_estimators, random_state=1993
     )
+    
     model.fit(X_train, y_train)
     
     # Save model in models/
