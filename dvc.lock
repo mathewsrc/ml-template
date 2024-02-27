@@ -29,12 +29,12 @@ stages:
       size: 561497
     - path: src/metrics_and_plots.py
       hash: md5
-      md5: 1e020362ef997bb9cd08abf14ba12ec1
-      size: 620
+      md5: dacf5cb2a799067a649c0d6b08a0cc25
+      size: 860
     - path: src/train.py
       hash: md5
-      md5: ca137c8fe17b32332c6aaaca080ee8b9
-      size: 2166
+      md5: adcc06ec32d4b1a628ca1ad66108f8b6
+      size: 2355
     - path: src/utils.py
       hash: md5
       md5: 5bb6efdf5e77f11274eee7a15372f87b
@@ -47,12 +47,16 @@ stages:
     outs:
     - path: metrics/metrics.json
       hash: md5
-      md5: 76e9a04509716da7d5646cdc86ebac05
-      size: 67
+      md5: 3d61499bfb8d49d64aa5f04c3d930593
+      size: 83
     - path: metrics/predictions.csv
       hash: md5
-      md5: 96e8a9530a2cb2294e92eb7fe8514626
-      size: 8014
+      md5: ee8561b8bf6c3c7c7d4edc427c481a75
+      size: 8027
+    - path: metrics/roc_curve.csv
+      hash: md5
+      md5: b2bfc7b1c554d79ed86006ea8e41b72a
+      size: 1266
     - path: models/model.pkl
       hash: md5
       md5: 5b8cc4df714bdb4bb85aa03994729986
