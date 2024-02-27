@@ -21,6 +21,22 @@ stages:
     outs:
     - metrics/metrics.json
     - models/model.pkl
+
     plots:
-    - metrics/predictions.csv
+    - metrics/predictions.csv:
+        template: confusion
+        x: predicted_label
+        y: true_label
+        x_label: 'Predicted Label'
+        y_label: 'True Label'
+        title: 'Confusion Matrix'
+
+    - metrics/roc_curve.csv:
+        template: simple
+        x: fpr
+        y: tpr
+        x_label: 'False Positive Rate'
+        y_label: 'True Positive Rate'
+        title: 'ROC Curve'
+
     - plots/confusion_matrix.png
