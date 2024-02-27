@@ -4,62 +4,55 @@ env:
   AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
 
 on:
-  workflow_run:
-      workflows: ["CI ##"]
-      types:
-        - completed
   pull_request:
     branches: main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '.gitingore'
 
 permissions: write-all
 
 jobs:
-  test:
+  train:
     runs-on: ubuntu-latest
-
+    if: startsWith(github.head_ref, 'main/')
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
+      
+      - name: Printout project name env
+        run: echo "PROJECT_NAME=$(echo $PROJECT_NAME)" >> $GITHUB_ENV
 
-      - name: Setup Python 3.12
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.12"
+
+      - name: Setup CML
+        uses: iterative/setup-cml@v1
+          
+      - name: Setup DVC
+        uses: iterative/setup-dvc@v1
 
       - name: Install dependencies
         run: |
           pipx install poetry
           poetry install
-      
-      # Setup CML GitHub Action
-      - name: Setup CML
-        uses: iterative/setup-cml@v1
-          
-      # Setup DVC GitHub Action
-      - name: Setup DVC
-        uses: iterative/setup-dvc@v1
-      
-      - name: Printout project name env
-        run: echo "PROJECT_NAME=$(echo $PROJECT_NAME)" >> $GITHUB_ENV
     
       - name: Run DVC pipeline for CML
         run: |
-          poetry run dvc repro
+          poetry run dvc pull
+          poetry run dvc repro train
 
       - name: Write CML report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Add metrics data to markdown
           poetry run dvc metrics show --md >> report.md
-          # Compare metrics with main branch
           git fetch --prune
-          echo "## Metrics Diff" >> report.md
           poetry run dvc metrics diff --md main >> report.md
-          echo "## Confusion Matrix Diff" >> report.md
           poetry run dvc plots diff --target $metric main >> report.md
-          # Add confusion matrix plot to markdown
-          #echo "![confusion matrix plot](./plots/confusion_matrix.png)" >> report.md
 
           # Create comment from markdown report
           cml comment create report.md
