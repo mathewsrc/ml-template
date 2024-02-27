@@ -13,13 +13,17 @@ on:
         description: 'Name of the project'
         required: true
         default: 'cicd-ai'
+  workflow_run: 
+    workflows: ["hp-tuning"]
+    types:
+      - completed
 
 permissions: write-all
 
 jobs:
   train:
     runs-on: ubuntu-latest
-    if: startsWith(github.head_ref, 'train/')
+    #if: startsWith(github.head_ref, 'train/')
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -53,9 +57,31 @@ jobs:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           poetry run dvc metrics show --md >> report.md
+          
           git fetch --prune
           poetry run dvc metrics diff --md main >> report.md
-          poetry run dvc plots diff --target $metric main >> report.md
+          
+          dvc plots diff \
+            --target metrics/predictions.csv \
+            --template confusion_normalized \
+            -x true_label \
+            -y predicted_label \
+            --title "Confusion Matrix" \
+            --show-vega master > vega.json
+          vl2png vega.json -s 1.5 > confusion_matrix.png
+          echo '![](./confusion_matrix.png "Confusion Matrix")' >> report.md
+
+          dvc plots diff \
+            --target metrics/roc_curve.csv \
+            --template: simple
+            -x: fpr
+            -y: tpr
+            --x_label: "False Positive Rate"
+            --y_label: "True Positive Rate"
+            --title: "ROC Curve"
+            --show-vega master > vega.json
+          vl2png vega.json -s 1.5 > roc_curve.png
+          echo '![](./roc_curve.png "ROC Curve")' >> report.md
 
           # Create comment from markdown report
           cml comment create report.md
