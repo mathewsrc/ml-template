@@ -1,0 +1,60 @@
+name: hp-tuning
+
+on:
+  pull_request:
+    branches: main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '.gitingore'
+
+permissions: write-all
+
+jobs:
+  hp_tune:
+    # Only run job if the current repository
+    # starts with the right prefix
+    if: startsWith(github.head_ref, 'hp_tune/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+    
+      - name: Printout project name env
+        run: echo "PROJECT_NAME=$(echo $PROJECT_NAME)" >> $GITHUB_ENV
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Setup DVC
+        uses: iterative/setup-dvc@v1
+
+      - name: Setup CML
+        uses: iterative/setup-cml@v1
+
+      - name: Install dependencies
+        run: |
+          pipx install poetry
+          poetry install
+
+      - name: Run DVC pipeline
+        run: |
+          poetry run dvc repro -f hp_tune
+      
+      - name: Create training branch
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Creating a new pull request"
+          cml pr create \
+          --user-email hp-bot@cicd.ai \
+          --user-name HPBot \
+          --message "HP tuning" \
+          # Write the new head branch name
+          --branch train/${{ github.sha }} \
+          # Write the target branch name
+          --target-branch main \
+          # Commit the hyperparameter job output file
+          config/hyperparameters.json
