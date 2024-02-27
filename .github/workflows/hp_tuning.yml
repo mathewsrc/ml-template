@@ -7,6 +7,12 @@ on:
       - 'README.md'
       - 'docs/**'
       - '.gitingore'
+  workflow_dispatch:
+    inputs:
+      PROJECT_NAME:
+        description: 'Name of the project'
+        required: true
+        default: 'cicd-ai'
 
 permissions: write-all
 
