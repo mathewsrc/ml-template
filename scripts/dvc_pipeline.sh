@@ -18,6 +18,13 @@ poetry run dvc stage add --force\
     -p random_state -p train.max_depth -p train.n_estimators \
     python src/train.py
 
+poetry run dvc stage add --force \
+    -n tunning \
+    -d src/tunning.py -d src/metrics_and_plots.py -d src/utils.py -d processed_dataset/apple_quality.csv -d config/hp_config.json \
+    -p random_state -p cv \
+    --outs-persist-no-cache hp_tunning_results.md \
+    python src/train.py 
+
 poetry run dvc dag
 
 poetry run dvc repro
