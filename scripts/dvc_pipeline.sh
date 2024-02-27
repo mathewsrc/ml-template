@@ -11,11 +11,11 @@ poetry run dvc stage add --force\
 poetry run dvc stage add --force\
     -n train \
     -d src/train.py -d src/metrics_and_plots.py -d src/utils.py -d processed_dataset/apple_quality.csv \
-    -o models/model.pkl -o reports/confusion_matrix.png -o metrics/metrics.json \
+    -o models/model.pkl -o metrics/metrics.json \
+    --plots plots/confusion_matrix.png --plots metrics/predictions.csv \
+    -p random_state -p train.max_depth -p train.n_estimators \
     python src/train.py
 
 poetry run dvc dag
 
 poetry run dvc repro
-
-cat dvc.lock 
