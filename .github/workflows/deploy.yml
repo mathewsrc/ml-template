@@ -2,10 +2,12 @@ name: Deploy
 
 # Trigger on CI workflow completion
 on:
-  workflow_run:
-    workflows: ["CML ##"]
-    types:
-      - completed
+  pull_request:
+    branches: main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '.gitingore'
 
 env:
   AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
@@ -22,7 +24,10 @@ jobs:
     defaults:
       run:
         shell: bash
-
+    
+    # Only run job if the current repository
+    # starts with the right prefix
+    if: startsWith(github.head_ref, 'deploy/')
     steps:
     - name: Checkout
       uses: actions/checkout@v3
