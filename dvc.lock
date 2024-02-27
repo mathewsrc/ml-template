@@ -29,8 +29,8 @@ stages:
       size: 561497
     - path: src/metrics_and_plots.py
       hash: md5
-      md5: fbfc524a87856c1c7b7611d918e9bc63
-      size: 1269
+      md5: 4452b65748ab51bb18d7e685cfbf1592
+      size: 1274
     - path: src/train.py
       hash: md5
       md5: dade9c5a8625aff584613defa3068690
@@ -66,7 +66,7 @@ stages:
       md5: d075b36d17e5ad7d9606a6f8a35a3bf4
       size: 15249
   tunning:
-    cmd: python src/tunning.py
+    cmd: python src/tuning.py
     deps:
     - path: config/hp_config.json
       hash: md5
@@ -78,8 +78,8 @@ stages:
       size: 561497
     - path: src/metrics_and_plots.py
       hash: md5
-      md5: fbfc524a87856c1c7b7611d918e9bc63
-      size: 1269
+      md5: 4452b65748ab51bb18d7e685cfbf1592
+      size: 1274
     - path: src/train.py
       hash: md5
       md5: dade9c5a8625aff584613defa3068690
@@ -93,7 +93,7 @@ stages:
         cv: 5
         random_state: 42
     outs:
-    - path: hp_tunning_results.md
+    - path: hp_tuning_results.md
       hash: md5
-      md5: 0fe60618273827f39be32468c8f7c848
+      md5: 2e29e66f5b2845a2ad9cf111b5197cce
       size: 25211
