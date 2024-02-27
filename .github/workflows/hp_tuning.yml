@@ -9,6 +9,10 @@ on:
         description: 'Name of the project'
         required: true
         default: 'cicd-ai'
+  workflow_run: 
+    workflows: ["CI"]
+    types:
+      - completed
 
 permissions: write-all
 
