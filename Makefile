@@ -77,6 +77,14 @@ dvc-pull:
 	@echo "Pulling data from DVC remote storage"
 	poetry run dvc pull
 
+dvc-metrics:
+	@echo "Showing DVC metrics"
+	poetry run dvc metrics show
+
+dvc-plots:
+	@echo "Showing DVC plots"
+	poetry run dvc plots show predictions.csv
+
 aws-user:
 	@echo "Check current AWS user signed in to AWS CLI"
 	aws sts get-caller-identity
