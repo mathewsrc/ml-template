@@ -28,6 +28,10 @@ jobs:
         run: |
           pipx install poetry
           poetry install
+      
+      # Setup CML GitHub Action
+      - name: Setup CML
+        uses: iterative/setup-cml@v1
           
       # Setup DVC GitHub Action
       - name: Setup DVC
