@@ -8,16 +8,18 @@ import mlflow
 import pickle
 from pathlib import Path
 from dvc.api import params_show
-from utils import PROCESSED_DATASET, TARGET_COLUMN
+from utils import PROCESSED_DATASET, TARGET_COLUMN, load_data, load_hyperparameters
 
 params = params_show()
 rf_max_depth = params["train"]["max_depth"]
 rf_n_estimators = params["train"]["n_estimators"]
+random_state = params["random_state"]
 
-def train_model(X_train, y_train):
-    model = RandomForestClassifier(
-        max_depth=rf_max_depth, n_estimators=rf_n_estimators, random_state=1993
-    )
+def train_model(X_train, y_train,
+                hyperparameters={"max_depth": rf_max_depth, 
+                                 "n_estimators": rf_n_estimators, 
+                                 "random_state": random_state}):
+    model = RandomForestClassifier(**hyperparameters)
     
     model.fit(X_train, y_train)
     
@@ -51,18 +53,13 @@ def evaluate_model(model, X_test, y_test, float_precision=4):
         json.dumps(metrics), parse_float=lambda x: round(float(x), float_precision)
     )
 
-def load_data(file_path):
-    data = pl.read_csv(file_path).to_pandas()
-    X = data.drop(TARGET_COLUMN, axis=1)
-    y = data[TARGET_COLUMN]
-    return X, y
-
 
 def main():
     X, y = load_data(PROCESSED_DATASET)
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1993)
 
-    model = train_model(X_train, y_train)
+    hyperparameters = load_hyperparameters("hyperparameters.json")
+    model = train_model(X_train, y_train, hyperparameters=hyperparameters)
     metrics = evaluate_model(model, X_test, y_test)
 
     print("====================Test Set Metrics==================")
