@@ -46,7 +46,7 @@ stages:
         cache: false
     - plots/confusion_matrix.png
   tunning:
-    cmd: python src/tunning.py
+    cmd: python src/tuning.py
     deps:
     - config/hp_config.json
     - processed_dataset/apple_quality.csv
@@ -57,6 +57,6 @@ stages:
     - random_state
     - cv
     outs:
-    - hp_tunning_results.md:
+    - hp_tuning_results.md:
         cache: false
         persist: true
