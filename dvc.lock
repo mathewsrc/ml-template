@@ -29,12 +29,12 @@ stages:
       size: 561497
     - path: src/metrics_and_plots.py
       hash: md5
-      md5: dacf5cb2a799067a649c0d6b08a0cc25
-      size: 860
+      md5: fbfc524a87856c1c7b7611d918e9bc63
+      size: 1269
     - path: src/train.py
       hash: md5
-      md5: adcc06ec32d4b1a628ca1ad66108f8b6
-      size: 2355
+      md5: dade9c5a8625aff584613defa3068690
+      size: 2360
     - path: src/utils.py
       hash: md5
       md5: 5bb6efdf5e77f11274eee7a15372f87b
@@ -65,3 +65,35 @@ stages:
       hash: md5
       md5: d075b36d17e5ad7d9606a6f8a35a3bf4
       size: 15249
+  tunning:
+    cmd: python src/tunning.py
+    deps:
+    - path: config/hp_config.json
+      hash: md5
+      md5: d98249503a9bb224ccd942a0b6d0c6bf
+      size: 118
+    - path: processed_dataset/apple_quality.csv
+      hash: md5
+      md5: 80fb7e4ee6cc0fb597b69ab0c97fc895
+      size: 561497
+    - path: src/metrics_and_plots.py
+      hash: md5
+      md5: fbfc524a87856c1c7b7611d918e9bc63
+      size: 1269
+    - path: src/train.py
+      hash: md5
+      md5: dade9c5a8625aff584613defa3068690
+      size: 2360
+    - path: src/utils.py
+      hash: md5
+      md5: 5bb6efdf5e77f11274eee7a15372f87b
+      size: 395
+    params:
+      params.yaml:
+        cv: 5
+        random_state: 42
+    outs:
+    - path: hp_tunning_results.md
+      hash: md5
+      md5: 0fe60618273827f39be32468c8f7c848
+      size: 25211
